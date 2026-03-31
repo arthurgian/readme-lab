@@ -8,6 +8,7 @@ import { useReadme } from "@/store/ReadmeContext";
 import { generateMarkdown } from "@/lib/generate-markdown";
 import { Toolbar } from "@/components/editor/toolbar";
 import { useState, useEffect } from "react";
+import { Outline } from "@/components/editor/outline";
 
 export default function Home() {
   const { state } = useReadme();
@@ -46,9 +47,6 @@ export default function Home() {
             <span className="text-[10px] leading-none font-black tracking-[0.2em] text-white uppercase">
               README Lab
             </span>
-            <span className="text-muted-foreground mt-1 text-[9px] leading-none font-medium">
-              v1.0.0 — Beta
-            </span>
           </div>
         </div>
 
@@ -71,27 +69,35 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex flex-1 overflow-hidden">
-        <section className="scrollbar-hide bg-background flex-1 overflow-y-auto border-r border-zinc-800">
-          <div className="flex min-h-full justify-center p-12">
-            <div className="relative flex w-full max-w-3xl items-start gap-12">
-              <div className="sticky top-0 z-50 w-[52px] shrink-0">
-                <Toolbar />
-              </div>
+      <main className="bg-background flex flex-1 flex-col overflow-hidden lg:flex-row">
+        <section className="custom-scrollbar bg-background flex-1 overflow-y-auto border-r border-zinc-800 lg:flex-[1.4]">
+          <div className="flex min-h-full p-6 sm:p-12">
+            <div className="relative flex w-full items-start gap-4 sm:gap-12">
+              <aside className="sticky top-4 hidden w-40 shrink-0 xl:block">
+                <Outline />
+              </aside>
 
-              <div className="min-w-0 flex-1">
-                <BlockList />
+              <div className="max-w-3xl min-w-0 flex-1">
+                <div className="sticky top-4 z-50 mb-8 w-full">
+                  <Toolbar />
+                </div>
+
+                <div className="w-full">
+                  <BlockList />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="scrollbar-hide flex-[1.3] overflow-y-auto bg-black p-12 shadow-[inset_20px_0_40px_rgba(0,0,0,0.5)]">
-          <div className="mx-auto max-w-2xl">
-            <div className="pointer-events-none mb-8 flex items-center gap-2 opacity-30 grayscale">
-              <span className="ml-2 font-mono text-[10px]">Preview</span>
+        <section className="custom-scrollbar flex-1 overflow-y-auto bg-black p-6 shadow-[inset_20px_0_40px_rgba(0,0,0,0.5)] sm:p-12">
+          <div className="mx-auto max-w-[700px]">
+            <div className="mb-6 flex items-center gap-2 opacity-20">
+              <span className="text-[10px] font-black tracking-widest text-white uppercase">
+                Live Preview
+              </span>
+              <div className="h-px flex-1 bg-zinc-800" />
             </div>
-
             <MarkdownRenderer />
           </div>
         </section>

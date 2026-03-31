@@ -1,19 +1,40 @@
 "use client";
 
+import { useState, ReactNode } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Trash2 } from "lucide-react";
+import {
+  GripVertical,
+  Trash2,
+  ChevronDown,
+  Heading,
+  Type,
+  Layout,
+  Cpu,
+  Image as ImageIcon,
+  Table,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ReactNode } from "react";
+
+const BLOCK_ICONS = {
+  header: Heading,
+  text: Type,
+  badges: Layout,
+  techstack: Cpu,
+  image: ImageIcon,
+  table: Table,
+};
 
 interface SortableBlockProps {
   id: string;
   type: string;
   onRemove: () => void;
   children: ReactNode;
+  configContent?: ReactNode;
 }
 
-export function SortableBlock({ id, type, onRemove, children }: SortableBlockProps) {
+export function SortableBlock({ id, type, onRemove, children, configContent }: SortableBlockProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
   });
@@ -24,6 +45,8 @@ export function SortableBlock({ id, type, onRemove, children }: SortableBlockPro
     zIndex: isDragging ? 50 : "auto",
     opacity: isDragging ? 0.5 : 1,
   };
+
+  const Icon = BLOCK_ICONS[type as keyof typeof BLOCK_ICONS] || Type;
 
   return (
     <div
@@ -36,25 +59,46 @@ export function SortableBlock({ id, type, onRemove, children }: SortableBlockPro
           <div
             {...attributes}
             {...listeners}
-            className="hover:bg-muted cursor-grab rounded p-1 active:cursor-grabbing"
+            className="cursor-grab rounded p-1 hover:bg-zinc-800 active:cursor-grabbing"
           >
-            <GripVertical className="text-muted-foreground/50 size-4" />
+            <GripVertical className="size-4 text-zinc-600" />
           </div>
-          <span className="text-primary bg-primary/10 rounded px-2 py-0.5 text-[10px] font-black tracking-[0.2em] uppercase">
-            {type}
-          </span>
+
+          <button
+            onClick={() => configContent && setIsExpanded(!isExpanded)}
+            className={`flex items-center gap-2 rounded px-2 py-0.5 transition-colors ${
+              configContent ? "cursor-pointer hover:bg-zinc-800/50" : "cursor-default"
+            }`}
+          >
+            <Icon className="text-primary size-3.5" />
+            <span className="text-primary text-[10px] font-black tracking-[0.2em] uppercase">
+              {type}
+            </span>
+            {configContent && (
+              <ChevronDown
+                className={`size-3 text-zinc-500 transition-transform duration-300 ${isExpanded ? "text-primary rotate-180" : ""}`}
+              />
+            )}
+          </button>
         </div>
+
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground hover:text-destructive size-8 transition-colors"
+          className="size-8 text-zinc-600 transition-colors hover:text-red-500"
           onClick={onRemove}
         >
           <Trash2 className="size-4" />
         </Button>
       </div>
 
-      {children}
+      {isExpanded && configContent && (
+        <div className="animate-in fade-in slide-in-from-top-2 mb-6 w-full rounded-lg border border-zinc-800/50 bg-black/20 p-2">
+          {configContent}
+        </div>
+      )}
+
+      <div className="relative">{children}</div>
     </div>
   );
 }

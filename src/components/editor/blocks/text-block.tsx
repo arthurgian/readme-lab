@@ -1,19 +1,21 @@
-import { Label } from "@/components/ui/label";
+"use client";
+
+import { Textarea } from "@/components/ui/textarea";
+import { TextContent } from "@/types/readme";
 
 interface TextBlockProps {
-  content: { text?: string };
-  onChange: (content: any) => void;
+  content: TextContent;
+  onChange: (content: TextContent) => void;
 }
 
 export function TextBlock({ content, onChange }: TextBlockProps) {
   return (
-    <div className="space-y-2">
-      <Label>Descrição / Texto</Label>
-      <textarea
-        className="border-input focus-visible:ring-ring flex min-h-[100px] w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-2 focus-visible:outline-none"
+    <div className="w-full">
+      <Textarea
         value={content.text || ""}
         onChange={(e) => onChange({ ...content, text: e.target.value })}
-        placeholder="Escreva o conteúdo da seção..."
+        placeholder="Descrição / Texto"
+        className="text-base leading-relaxed"
       />
     </div>
   );

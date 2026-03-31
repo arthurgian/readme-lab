@@ -16,6 +16,9 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+
+import { Heading1, Heading2, Heading3, Bold, Italic, Code } from "lucide-react";
+
 import { SortableBlock } from "./sortable-block";
 import { HeaderBlock } from "./blocks/header-block";
 import { TextBlock } from "./blocks/text-block";
@@ -23,6 +26,7 @@ import { BadgeBlock } from "./blocks/badge-block";
 import { TechStackBlock } from "./blocks/tech-stack-block";
 import { ImageBlock } from "./blocks/image-block";
 import { TableBlock } from "./blocks/table-block";
+import { ReadmeBlock } from "@/types/readme";
 
 export function BlockList() {
   const { state, dispatch } = useReadme();
@@ -36,17 +40,86 @@ export function BlockList() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (over && active.id !== over.id) {
       const oldIndex = state.blocks.findIndex((block) => block.id === active.id);
       const newIndex = state.blocks.findIndex((block) => block.id === over.id);
-
       const newOrder = arrayMove(state.blocks, oldIndex, newIndex);
       dispatch({ type: "REORDER_BLOCKS", payload: newOrder });
     }
   };
 
-  const renderEditor = (block: any) => {
+  const renderBlockConfig = (block: ReadmeBlock) => {
+    const updateContent = (newContent: any) => {
+      dispatch({
+        type: "UPDATE_BLOCK_CONTENT",
+        payload: { id: block.id, content: { ...block.content, ...newContent } },
+      });
+    };
+
+    switch (block.type) {
+      case "header": {
+        const currentLevel = block.content.level || 1;
+
+        return (
+          <div className="flex w-full items-center gap-2">
+            <span className="hidden px-2 text-[9px] font-bold tracking-widest text-zinc-600 uppercase sm:inline">
+              Level
+            </span>
+            <div className="flex flex-1 gap-1">
+              {[1, 2, 3].map((lvl) => {
+                const Icon = lvl === 1 ? Heading1 : lvl === 2 ? Heading2 : Heading3;
+                return (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => updateContent({ level: lvl as 1 | 2 | 3 })}
+                    className={`flex h-8 flex-1 items-center justify-center rounded-md transition-all ${
+                      currentLevel === lvl
+                        ? "bg-zinc-800 text-white shadow-sm ring-1 ring-zinc-700"
+                        : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300"
+                    }`}
+                  >
+                    <Icon className="size-4" />
+                    <span className="ml-2 text-[10px] font-bold">H{lvl}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      }
+
+      case "text": {
+        return (
+          <div className="flex w-full items-center gap-2">
+            <span className="hidden px-2 text-[9px] font-bold tracking-widest text-zinc-600 uppercase sm:inline">
+              Format
+            </span>
+            <div className="flex flex-1 gap-1">
+              {[
+                { id: "bold", icon: Bold, label: "Bold" },
+                { id: "italic", icon: Italic, label: "Italic" },
+                { id: "code", icon: Code, label: "Code" },
+              ].map((tool) => (
+                <button
+                  key={tool.id}
+                  className="flex h-8 flex-1 items-center justify-center gap-2 rounded-md text-zinc-500 transition-all hover:bg-zinc-800/50 hover:text-zinc-300"
+                >
+                  <tool.icon className="size-3.5" />
+                  <span className="text-[10px] font-bold">{tool.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      default:
+        return null;
+    }
+  };
+
+  const renderEditor = (block: ReadmeBlock) => {
     const updateContent = (newContent: any) => {
       dispatch({
         type: "UPDATE_BLOCK_CONTENT",
@@ -89,6 +162,7 @@ export function BlockList() {
               key={block.id}
               id={block.id}
               type={block.type}
+              configContent={renderBlockConfig(block)}
               onRemove={() => dispatch({ type: "REMOVE_BLOCK", payload: block.id })}
             >
               {renderEditor(block)}
