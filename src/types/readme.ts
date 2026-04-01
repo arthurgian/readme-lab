@@ -19,8 +19,11 @@ export interface TextContent {
 export interface BadgeItem {
   label: string;
   color: string;
+  style?: "plastic" | "flat" | "flat-square" | "for-the-badge";
+  isSelected?: boolean;
+  link?: string;
+  logoColor?: string;
 }
-
 export interface BadgesContent {
   items?: BadgeItem[];
 }

@@ -21,13 +21,25 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
           return `\`\`\`${lang}\n${command}\n\`\`\``;
         }
 
-        case "badges":
+        case "badges": {
           return (block.content.items || [])
-            .map(
-              (item) =>
-                `![${item.label}](https://img.shields.io/badge/${encodeURIComponent(item.label)}-${item.color}?style=for-the-badge&logo=${item.label.toLowerCase()}&logoColor=white)`,
-            )
+            .map((item) => {
+              const style = item.style || "for-the-badge";
+
+              const logoColor = item.logoColor || "FFFFFF";
+
+              const imgUrl = `https://img.shields.io/badge/${encodeURIComponent(item.label)}-${item.color}?style=${style}&logo=${encodeURIComponent(item.label.toLowerCase())}&logoColor=${logoColor}`;
+
+              const markdownImage = `![${item.label}](${imgUrl})`;
+
+              if (item.link && item.link.trim() !== "") {
+                return `[${markdownImage}](${item.link.trim()})`;
+              }
+
+              return markdownImage;
+            })
             .join(" ");
+        }
 
         case "techstack": {
           const techList = (block.content.techs || []).join(",");

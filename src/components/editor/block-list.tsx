@@ -30,6 +30,7 @@ import { ReadmeBlock } from "@/types/readme";
 import { cn } from "@/lib/utils";
 import { TextToolbar } from "./blocks/text-toolbar";
 import { CommandBlock } from "./blocks/command-block";
+import { BadgeConfigurator } from "./blocks/badge-configurator";
 
 export function BlockList() {
   const { state, dispatch } = useReadme();
@@ -135,7 +136,7 @@ export function BlockList() {
                     type="button"
                     onClick={() => updateContent({ language: lang })}
                     className={cn(
-                      "flex h-8 flex-1 items-center justify-center rounded-md border text-[10px] font-bold transition-all",
+                      "flex h-8 flex-1 items-center justify-center rounded-md border text-[10px] font-bold uppercase transition-all",
                       isActive
                         ? "bg-primary/20 text-primary border-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.1)]"
                         : "border-transparent text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300",
@@ -147,6 +148,12 @@ export function BlockList() {
               })}
             </div>
           </div>
+        );
+      }
+
+      case "badges": {
+        return (
+          <BadgeConfigurator block={block} updateContent={updateContent} />
         );
       }
 
