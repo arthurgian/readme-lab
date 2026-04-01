@@ -2,7 +2,7 @@
 
 import { CommandContent } from "@/types/readme";
 import { cn } from "@/lib/utils";
-import { Terminal, Copy } from "lucide-react";
+import { Terminal } from "lucide-react";
 
 interface CommandBlockProps {
   id: string;
@@ -35,10 +35,6 @@ export function CommandBlock({ id, content, onChange }: CommandBlockProps) {
           onChange={(e) => onChange({ ...content, command: e.target.value })}
           className="flex-1 bg-transparent font-mono text-sm text-zinc-200 outline-none placeholder:text-zinc-700"
         />
-
-        <div className="ml-3 flex items-center pl-3">
-          <Copy className="size-4 text-zinc-600 transition-colors group-hover:text-zinc-400" />
-        </div>
       </div>
     </div>
   );

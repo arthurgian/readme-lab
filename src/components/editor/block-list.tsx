@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { Heading1, Heading2, Heading3 } from "lucide-react";
+import { Heading1, Heading2, Heading3, Moon, Sun } from "lucide-react";
 
 import { SortableBlock } from "./sortable-block";
 import { HeaderBlock } from "./blocks/header-block";
@@ -55,12 +55,14 @@ export function BlockList() {
   };
 
   const renderBlockConfig = (block: ReadmeBlock) => {
-    const updateContent = (newContent: any) => {
+    const updateContent = <T extends ReadmeBlock["content"]>(
+      newContent: Partial<T>,
+    ) => {
       dispatch({
         type: "UPDATE_BLOCK_CONTENT",
         payload: {
           id: block.id,
-          content: { ...block.content, ...newContent },
+          content: { ...block.content, ...newContent } as T,
         },
       });
     };
@@ -92,7 +94,7 @@ export function BlockList() {
                     className={cn(
                       "flex h-8 flex-1 items-center justify-center gap-2 rounded-md border transition-all",
                       isActive
-                        ? "bg-primary/20 text-primary border-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.1)]"
+                        ? "border-primary/40 bg-primary/20 text-primary shadow-[0_0_10px_rgba(var(--primary),0.1)]"
                         : "border-transparent text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300",
                     )}
                   >
@@ -138,7 +140,7 @@ export function BlockList() {
                     className={cn(
                       "flex h-8 flex-1 items-center justify-center rounded-md border text-[10px] font-bold uppercase transition-all",
                       isActive
-                        ? "bg-primary/20 text-primary border-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.1)]"
+                        ? "border-primary/40 bg-primary/20 text-primary shadow-[0_0_10px_rgba(var(--primary),0.1)]"
                         : "border-transparent text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300",
                     )}
                   >
@@ -153,7 +155,54 @@ export function BlockList() {
 
       case "badges": {
         return (
-          <BadgeConfigurator block={block} updateContent={updateContent} />
+          <BadgeConfigurator
+            block={block}
+            updateContent={(c) => updateContent(c)}
+          />
+        );
+      }
+
+      case "techstack": {
+        const techs = block.content.techs || [];
+        const hasSelected = techs.some((t) => t?.isSelected);
+
+        const applyTheme = (theme: "dark" | "light") => {
+          const newTechs = techs.map((t) => {
+            if (!hasSelected || t?.isSelected) {
+              return { ...t, theme };
+            }
+            return t;
+          });
+          updateContent({ techs: newTechs });
+        };
+
+        return (
+          <div className="flex w-full items-center gap-2">
+            <span className="hidden px-2 text-[9px] font-bold tracking-widest text-zinc-600 uppercase sm:inline">
+              Tema {hasSelected ? "(Selecionados)" : "(Todos)"}
+            </span>
+            <div className="flex flex-1 gap-1">
+              {(["dark", "light"] as const).map((theme) => {
+                const Icon = theme === "dark" ? Moon : Sun;
+                const label = theme === "dark" ? "Dark" : "Light";
+
+                return (
+                  <button
+                    key={theme}
+                    type="button"
+                    onClick={() => applyTheme(theme)}
+                    className={cn(
+                      "flex h-8 flex-1 items-center justify-center gap-1.5 rounded-md border text-[10px] font-bold transition-all",
+                      "active:bg-primary/20 active:text-primary border-transparent text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300",
+                    )}
+                  >
+                    <Icon className="size-3" />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         );
       }
 
@@ -163,7 +212,7 @@ export function BlockList() {
   };
 
   const renderEditor = (block: ReadmeBlock) => {
-    const updateContent = (newContent: any) => {
+    const updateContent = <T extends ReadmeBlock["content"]>(newContent: T) => {
       dispatch({
         type: "UPDATE_BLOCK_CONTENT",
         payload: { id: block.id, content: newContent },
@@ -172,31 +221,54 @@ export function BlockList() {
 
     switch (block.type) {
       case "header":
-        return <HeaderBlock content={block.content} onChange={updateContent} />;
+        return (
+          <HeaderBlock
+            content={block.content}
+            onChange={(c) => updateContent(c)}
+          />
+        );
       case "text":
         return (
           <TextBlock
             id={block.id}
             content={block.content}
-            onChange={updateContent}
+            onChange={(c) => updateContent(c)}
           />
         );
       case "badges":
-        return <BadgeBlock content={block.content} onChange={updateContent} />;
+        return (
+          <BadgeBlock
+            content={block.content}
+            onChange={(c) => updateContent(c)}
+          />
+        );
       case "techstack":
         return (
-          <TechStackBlock content={block.content} onChange={updateContent} />
+          <TechStackBlock
+            content={block.content}
+            onChange={(c) => updateContent(c)}
+          />
         );
       case "image":
-        return <ImageBlock content={block.content} onChange={updateContent} />;
+        return (
+          <ImageBlock
+            content={block.content}
+            onChange={(c) => updateContent(c)}
+          />
+        );
       case "table":
-        return <TableBlock content={block.content} onChange={updateContent} />;
+        return (
+          <TableBlock
+            content={block.content}
+            onChange={(c) => updateContent(c)}
+          />
+        );
       case "command":
         return (
           <CommandBlock
             id={block.id}
             content={block.content}
-            onChange={updateContent}
+            onChange={(c) => updateContent(c)}
           />
         );
       default:

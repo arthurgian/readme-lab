@@ -39,13 +39,16 @@ export function ImageBlock({ content, onChange }: any) {
             alt={content.alt}
             className="h-full w-full object-contain p-2"
             onError={(e) =>
-              (e.currentTarget.src = "https://placehold.co/600x400?text=Imagem+Nao+Encontrada")
+              (e.currentTarget.src =
+                "https://placehold.co/600x400?text=Imagem+Nao+Encontrada")
             }
           />
         ) : (
           <div className="text-muted-foreground flex flex-col items-center gap-2">
             <ImageIcon className="size-8 opacity-20" />
-            <span className="text-xs italic">Insira uma URL para ver o preview</span>
+            <span className="text-xs italic">
+              Insira uma URL para ver o preview
+            </span>
           </div>
         )}
       </div>

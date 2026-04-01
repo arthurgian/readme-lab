@@ -28,8 +28,14 @@ export interface BadgesContent {
   items?: BadgeItem[];
 }
 
+export interface TechItem {
+  name: string;
+  isSelected?: boolean;
+  theme?: "dark" | "light";
+}
+
 export interface TechStackContent {
-  techs?: string[];
+  techs?: TechItem[];
 }
 
 export interface ImageContent {
