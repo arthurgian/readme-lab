@@ -206,6 +206,32 @@ export function BlockList() {
         );
       }
 
+      case "image": {
+        const updateImageSize = (val: string) => {
+          updateContent({ width: val });
+        };
+
+        return (
+          <div className="flex w-full items-center gap-4">
+            <span className="hidden px-2 text-[9px] font-bold tracking-widest text-zinc-600 uppercase sm:inline">
+              Largura (Width)
+            </span>
+            <div className="flex flex-1 gap-2">
+              <div className="flex flex-1 items-center rounded-md border border-zinc-800 bg-zinc-900/50 px-2">
+                <span className="text-[10px] text-zinc-500">W:</span>
+                <input
+                  type="text"
+                  placeholder="ex: 100% ou 500px"
+                  value={block.content.width || ""}
+                  onChange={(e) => updateImageSize(e.target.value)}
+                  className="w-full bg-transparent px-2 py-1.5 text-[10px] text-zinc-300 outline-none placeholder:text-zinc-600"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       default:
         return null;
     }

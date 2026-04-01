@@ -41,6 +41,7 @@ export interface TechStackContent {
 export interface ImageContent {
   url?: string;
   alt?: string;
+  width?: string;
 }
 
 export interface TableContent {

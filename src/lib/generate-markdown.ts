@@ -87,10 +87,17 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
         }
 
         case "image": {
-          const url = block.content.url || "";
+          if (!block.content.url) return "";
+
+          const url = block.content.url;
           const alt = block.content.alt || "image";
-          if (!url) return "";
-          return `<p align="center">\n  <img src="${url}" alt="${alt}" width="30%" />\n</p>`;
+          const width = block.content.width;
+
+          if (width) {
+            return `<p>\n  <img src="${url}" alt="${alt}" width="${width}" />\n</p>`;
+          }
+
+          return `![${alt}](${url})`;
         }
 
         case "table": {
