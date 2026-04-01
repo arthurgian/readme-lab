@@ -15,7 +15,7 @@ export function HeaderBlock({ content, onChange }: HeaderBlockProps) {
         value={content.title || ""}
         onChange={(e) => onChange({ ...content, title: e.target.value })}
         placeholder="Digite o título da seção..."
-        className="text-lg font-bold tracking-tight"
+        className="text-lg tracking-tight"
       />
     </div>
   );

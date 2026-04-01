@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { Heading1, Heading2, Heading3, Bold, Italic, Code } from "lucide-react";
+import { Heading1, Heading2, Heading3 } from "lucide-react";
 
 import { SortableBlock } from "./sortable-block";
 import { HeaderBlock } from "./blocks/header-block";
@@ -27,6 +27,9 @@ import { TechStackBlock } from "./blocks/tech-stack-block";
 import { ImageBlock } from "./blocks/image-block";
 import { TableBlock } from "./blocks/table-block";
 import { ReadmeBlock } from "@/types/readme";
+import { cn } from "@/lib/utils";
+import { TextToolbar } from "./blocks/text-toolbar";
+import { CommandBlock } from "./blocks/command-block";
 
 export function BlockList() {
   const { state, dispatch } = useReadme();
@@ -41,7 +44,9 @@ export function BlockList() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = state.blocks.findIndex((block) => block.id === active.id);
+      const oldIndex = state.blocks.findIndex(
+        (block) => block.id === active.id,
+      );
       const newIndex = state.blocks.findIndex((block) => block.id === over.id);
       const newOrder = arrayMove(state.blocks, oldIndex, newIndex);
       dispatch({ type: "REORDER_BLOCKS", payload: newOrder });
@@ -52,35 +57,48 @@ export function BlockList() {
     const updateContent = (newContent: any) => {
       dispatch({
         type: "UPDATE_BLOCK_CONTENT",
-        payload: { id: block.id, content: { ...block.content, ...newContent } },
+        payload: {
+          id: block.id,
+          content: { ...block.content, ...newContent },
+        },
       });
     };
 
     switch (block.type) {
       case "header": {
         const currentLevel = block.content.level || 1;
-
         return (
           <div className="flex w-full items-center gap-2">
-            <span className="hidden px-2 text-[9px] font-bold tracking-widest text-zinc-600 uppercase sm:inline">
+            <span
+              className={cn(
+                "hidden px-2 text-[9px] font-bold uppercase",
+                "tracking-widest text-zinc-600 sm:inline",
+              )}
+            >
               Level
             </span>
             <div className="flex flex-1 gap-1">
               {[1, 2, 3].map((lvl) => {
-                const Icon = lvl === 1 ? Heading1 : lvl === 2 ? Heading2 : Heading3;
+                const Icon =
+                  lvl === 1 ? Heading1 : lvl === 2 ? Heading2 : Heading3;
+                const isActive = currentLevel === lvl;
+
                 return (
                   <button
                     key={lvl}
                     type="button"
                     onClick={() => updateContent({ level: lvl as 1 | 2 | 3 })}
-                    className={`flex h-8 flex-1 items-center justify-center rounded-md transition-all ${
-                      currentLevel === lvl
-                        ? "bg-zinc-800 text-white shadow-sm ring-1 ring-zinc-700"
-                        : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300"
-                    }`}
+                    className={cn(
+                      "flex h-8 flex-1 items-center justify-center gap-2 rounded-md border transition-all",
+                      isActive
+                        ? "bg-primary/20 text-primary border-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.1)]"
+                        : "border-transparent text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300",
+                    )}
                   >
-                    <Icon className="size-4" />
-                    <span className="ml-2 text-[10px] font-bold">H{lvl}</span>
+                    <Icon
+                      className={cn("size-3.5", isActive && "stroke-[3px]")}
+                    />
+                    <span className="text-[10px] font-bold">H{lvl}</span>
                   </button>
                 );
               })}
@@ -90,25 +108,43 @@ export function BlockList() {
       }
 
       case "text": {
+        return <TextToolbar blockId={block.id} />;
+      }
+
+      case "command": {
+        const currentLang = block.content.language || "sh";
+        const languages = ["sh", "bash", "npm", "yarn", "js"];
+
         return (
           <div className="flex w-full items-center gap-2">
-            <span className="hidden px-2 text-[9px] font-bold tracking-widest text-zinc-600 uppercase sm:inline">
-              Format
+            <span
+              className={cn(
+                "hidden px-2 text-[9px] font-bold uppercase",
+                "tracking-widest text-zinc-600 sm:inline",
+              )}
+            >
+              Language
             </span>
             <div className="flex flex-1 gap-1">
-              {[
-                { id: "bold", icon: Bold, label: "Bold" },
-                { id: "italic", icon: Italic, label: "Italic" },
-                { id: "code", icon: Code, label: "Code" },
-              ].map((tool) => (
-                <button
-                  key={tool.id}
-                  className="flex h-8 flex-1 items-center justify-center gap-2 rounded-md text-zinc-500 transition-all hover:bg-zinc-800/50 hover:text-zinc-300"
-                >
-                  <tool.icon className="size-3.5" />
-                  <span className="text-[10px] font-bold">{tool.label}</span>
-                </button>
-              ))}
+              {languages.map((lang) => {
+                const isActive = currentLang === lang;
+
+                return (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => updateContent({ language: lang })}
+                    className={cn(
+                      "flex h-8 flex-1 items-center justify-center rounded-md border text-[10px] font-bold transition-all",
+                      isActive
+                        ? "bg-primary/20 text-primary border-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.1)]"
+                        : "border-transparent text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300",
+                    )}
+                  >
+                    {lang}
+                  </button>
+                );
+              })}
             </div>
           </div>
         );
@@ -131,15 +167,31 @@ export function BlockList() {
       case "header":
         return <HeaderBlock content={block.content} onChange={updateContent} />;
       case "text":
-        return <TextBlock content={block.content} onChange={updateContent} />;
+        return (
+          <TextBlock
+            id={block.id}
+            content={block.content}
+            onChange={updateContent}
+          />
+        );
       case "badges":
         return <BadgeBlock content={block.content} onChange={updateContent} />;
       case "techstack":
-        return <TechStackBlock content={block.content} onChange={updateContent} />;
+        return (
+          <TechStackBlock content={block.content} onChange={updateContent} />
+        );
       case "image":
         return <ImageBlock content={block.content} onChange={updateContent} />;
       case "table":
         return <TableBlock content={block.content} onChange={updateContent} />;
+      case "command":
+        return (
+          <CommandBlock
+            id={block.id}
+            content={block.content}
+            onChange={updateContent}
+          />
+        );
       default:
         return null;
     }
@@ -163,7 +215,9 @@ export function BlockList() {
               id={block.id}
               type={block.type}
               configContent={renderBlockConfig(block)}
-              onRemove={() => dispatch({ type: "REMOVE_BLOCK", payload: block.id })}
+              onRemove={() =>
+                dispatch({ type: "REMOVE_BLOCK", payload: block.id })
+              }
             >
               {renderEditor(block)}
             </SortableBlock>

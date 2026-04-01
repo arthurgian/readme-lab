@@ -4,7 +4,8 @@ export type BlockType =
   | "badges"
   | "techstack"
   | "image"
-  | "table";
+  | "table"
+  | "command";
 
 export interface HeaderContent {
   title?: string;
@@ -38,13 +39,19 @@ export interface TableContent {
   rows?: string[][];
 }
 
+export type CommandContent = {
+  language?: string;
+  command?: string;
+};
+
 export type ReadmeBlock =
   | { id: string; type: "header"; content: HeaderContent }
   | { id: string; type: "text"; content: TextContent }
   | { id: string; type: "badges"; content: BadgesContent }
   | { id: string; type: "techstack"; content: TechStackContent }
   | { id: string; type: "image"; content: ImageContent }
-  | { id: string; type: "table"; content: TableContent };
+  | { id: string; type: "table"; content: TableContent }
+  | { id: string; type: "command"; content: CommandContent };
 
 export interface ReadmeState {
   blocks: ReadmeBlock[];
@@ -63,7 +70,8 @@ export type ReadmeAction =
             BadgesContent &
             TechStackContent &
             ImageContent &
-            TableContent
+            TableContent &
+            CommandContent
         >;
       };
     }

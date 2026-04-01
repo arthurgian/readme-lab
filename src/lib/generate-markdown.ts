@@ -1,4 +1,5 @@
 import { ReadmeBlock } from "@/types/readme";
+import { turndownService } from "./turndown";
 
 export function generateMarkdown(blocks: ReadmeBlock[]): string {
   return blocks
@@ -7,8 +8,18 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
         case "header":
           return `${"#".repeat(block.content.level || 1)} ${block.content.title || "Título do Projeto"}`;
 
-        case "text":
-          return `${block.content.text || "Descrição"}`;
+        case "text": {
+          const htmlContent = block.content.text || "";
+          const markdownText = turndownService.turndown(htmlContent);
+          return markdownText || "";
+        }
+
+        case "command": {
+          const lang = block.content.language || "sh";
+          const command = block.content.command || "";
+          if (!command) return "";
+          return `\`\`\`${lang}\n${command}\n\`\`\``;
+        }
 
         case "badges":
           return (block.content.items || [])
@@ -34,7 +45,9 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
           if (headers.length === 0) return "";
           const headerRow = `| ${headers.join(" | ")} |`;
           const separator = `| ${headers.map(() => "---").join(" | ")} |`;
-          const bodyRows = rows.map((row) => `| ${row.join(" | ")} |`).join("\n");
+          const bodyRows = rows
+            .map((row) => `| ${row.join(" | ")} |`)
+            .join("\n");
           return `${headerRow}\n${separator}\n${bodyRows}`;
         }
 

@@ -13,8 +13,10 @@ import {
   Cpu,
   Image as ImageIcon,
   Table,
+  Terminal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const BLOCK_ICONS = {
   header: Heading,
@@ -23,6 +25,7 @@ const BLOCK_ICONS = {
   techstack: Cpu,
   image: ImageIcon,
   table: Table,
+  command: Terminal,
 };
 
 interface SortableBlockProps {
@@ -33,9 +36,22 @@ interface SortableBlockProps {
   configContent?: ReactNode;
 }
 
-export function SortableBlock({ id, type, onRemove, children, configContent }: SortableBlockProps) {
+export function SortableBlock({
+  id,
+  type,
+  onRemove,
+  children,
+  configContent,
+}: SortableBlockProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id,
   });
 
@@ -52,31 +68,50 @@ export function SortableBlock({ id, type, onRemove, children, configContent }: S
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative mb-6 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 shadow-2xl shadow-black backdrop-blur-md transition-all hover:border-zinc-700 hover:bg-zinc-900/80"
+      className={cn(
+        "group relative mb-6 rounded-xl border border-zinc-800",
+        "bg-zinc-900/50 p-6 shadow-2xl shadow-black backdrop-blur-md",
+        "transition-all hover:border-zinc-700 hover:bg-zinc-900/80",
+      )}
     >
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab rounded p-1 hover:bg-zinc-800 active:cursor-grabbing"
+            className={cn(
+              "cursor-grab rounded p-1 transition-colors",
+              "hover:bg-zinc-800 active:cursor-grabbing",
+            )}
           >
             <GripVertical className="size-4 text-zinc-600" />
           </div>
 
           <button
+            type="button"
             onClick={() => configContent && setIsExpanded(!isExpanded)}
-            className={`flex items-center gap-2 rounded px-2 py-0.5 transition-colors ${
-              configContent ? "cursor-pointer hover:bg-zinc-800/50" : "cursor-default"
-            }`}
+            className={cn(
+              "flex items-center gap-2 rounded px-2 py-0.5 transition-colors",
+              configContent
+                ? "cursor-pointer hover:bg-zinc-800/50"
+                : "cursor-default",
+            )}
           >
             <Icon className="text-primary size-3.5" />
-            <span className="text-primary text-[10px] font-black tracking-[0.2em] uppercase">
+            <span
+              className={cn(
+                "text-primary text-[10px] font-black uppercase",
+                "tracking-[0.2em]",
+              )}
+            >
               {type}
             </span>
             {configContent && (
               <ChevronDown
-                className={`size-3 text-zinc-500 transition-transform duration-300 ${isExpanded ? "text-primary rotate-180" : ""}`}
+                className={cn(
+                  "size-3 text-zinc-500 transition-transform duration-300",
+                  isExpanded ? "text-primary rotate-180" : "",
+                )}
               />
             )}
           </button>
@@ -93,7 +128,12 @@ export function SortableBlock({ id, type, onRemove, children, configContent }: S
       </div>
 
       {isExpanded && configContent && (
-        <div className="animate-in fade-in slide-in-from-top-2 mb-6 w-full rounded-lg border border-zinc-800/50 bg-black/20 p-2">
+        <div
+          className={cn(
+            "animate-in fade-in slide-in-from-top-2 mb-6 w-full",
+            "rounded-lg border border-zinc-800/50 bg-black/20 p-2",
+          )}
+        >
           {configContent}
         </div>
       )}
