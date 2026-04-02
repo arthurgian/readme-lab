@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { TextToolbar } from "./blocks/text-toolbar";
 import { CommandBlock } from "./blocks/command-block";
 import { BadgeConfigurator } from "./blocks/badge-configurator";
+import { TableConfigurator } from "./blocks/table-configurator";
 
 export function BlockList() {
   const { state, dispatch } = useReadme();
@@ -229,6 +230,15 @@ export function BlockList() {
               </div>
             </div>
           </div>
+        );
+      }
+
+      case "table": {
+        return (
+          <TableConfigurator
+            block={block}
+            updateContent={(c) => updateContent(c)}
+          />
         );
       }
 

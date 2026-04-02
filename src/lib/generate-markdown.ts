@@ -101,14 +101,31 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
         }
 
         case "table": {
-          const { headers = [], rows = [] } = block.content;
+          const headers = block.content.headers || [];
+          const rows = block.content.rows || [];
+          const alignments = block.content.alignments || [];
+
           if (headers.length === 0) return "";
-          const headerRow = `| ${headers.join(" | ")} |`;
-          const separator = `| ${headers.map(() => "---").join(" | ")} |`;
-          const bodyRows = rows
-            .map((row) => `| ${row.join(" | ")} |`)
+
+          const headerRow = `| ${headers.map((h: string) => h || " ").join(" | ")} |`;
+
+          const separatorRow = `| ${headers
+            .map((_, i) => {
+              const align = alignments[i];
+              if (align === "center") return ":---:";
+              if (align === "right") return "---:";
+              return "---";
+            })
+            .join(" | ")} |`;
+
+          const dataRows = rows
+            .map(
+              (row: string[]) =>
+                `| ${row.map((cell) => cell || " ").join(" | ")} |`,
+            )
             .join("\n");
-          return `${headerRow}\n${separator}\n${bodyRows}`;
+
+          return `\n\n${headerRow}\n${separatorRow}\n${dataRows}`;
         }
 
         default:

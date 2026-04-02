@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import CodeExtension from "@tiptap/extension-code";
 import { useEffect, useState, useRef } from "react";
 import { TextContent } from "@/types/readme";
 import { cn } from "@/lib/utils";
@@ -24,16 +25,19 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        code: {
-          HTMLAttributes: {
-            class: cn(
-              "rounded-md bg-zinc-800/80 px-1.5 py-0.5",
-              "font-mono text-sm text-foreground",
-              "border border-zinc-700",
-            ),
-          },
-        },
+        code: false,
         codeBlock: false,
+      }),
+      CodeExtension.extend({
+        excludes: "",
+      }).configure({
+        HTMLAttributes: {
+          class: cn(
+            "rounded-md bg-zinc-800/80 px-1.5 py-0.5",
+            "font-mono text-sm text-foreground",
+            "border border-zinc-700",
+          ),
+        },
       }),
       Link.configure({
         openOnClick: false,

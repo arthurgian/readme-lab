@@ -1,7 +1,6 @@
 "use client";
 
 import { useReadme } from "@/store/ReadmeContext";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   Type,
@@ -11,19 +10,22 @@ import {
   Table,
   Hash,
   Terminal,
+  SeparatorHorizontal,
+  Cpu,
 } from "lucide-react";
 
 export function Toolbar() {
   const { dispatch } = useReadme();
 
   const items = [
-    { type: "header", icon: Hash, label: "H1" },
+    { type: "header", icon: Hash, label: "Header" },
     { type: "text", icon: AlignLeft, label: "Texto" },
     { type: "command", icon: Terminal, label: "Comando" },
     { type: "badges", icon: Layout, label: "Badges" },
-    { type: "techstack", icon: Type, label: "Stack" },
+    { type: "techstack", icon: Cpu, label: "Skills" },
     { type: "image", icon: ImageIcon, label: "Imagem" },
     { type: "table", icon: Table, label: "Tabela" },
+    { type: "hr", icon: SeparatorHorizontal, label: "Linha" },
   ];
 
   return (
@@ -35,40 +37,32 @@ export function Toolbar() {
         "hover:border-zinc-700/50",
       )}
     >
-      <div className={cn("flex shrink-0 items-center pr-2 pl-3 opacity-60")}>
-        <span
-          className={cn(
-            "text-[9px] font-semibold tracking-[0.25em] uppercase",
-            "text-zinc-500 select-none",
-          )}
-        >
+      <div className="flex shrink-0 items-center pr-2 pl-3 opacity-60">
+        <span className="text-[9px] font-semibold tracking-[0.25em] text-zinc-500 uppercase select-none">
           Insert
         </span>
       </div>
 
-      <div className={cn("h-3 w-px shrink-0 bg-zinc-800/80")} />
+      <div className="h-4 w-px shrink-0 bg-zinc-800/80" />
 
-      <div className={cn("flex flex-1 gap-1 pl-1")}>
+      <div className="custom-scrollbar flex flex-1 gap-1 overflow-x-auto pl-1">
         {items.map((item) => (
-          <Button
+          <button
             key={item.type}
-            variant="ghost"
-            size="sm"
+            type="button"
             className={cn(
-              "h-8 flex-1 gap-1.5 px-0 transition-all",
-              "text-[11px] text-zinc-400",
-              "hover:bg-zinc-800 hover:text-white",
-              "sm:gap-2 sm:px-2",
+              "flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 transition-all",
+              "text-[11px] font-medium text-zinc-400",
+              "hover:bg-zinc-800 hover:text-zinc-100 active:scale-[0.98]",
+              "sm:gap-2 sm:px-3",
             )}
             onClick={() =>
               dispatch({ type: "ADD_BLOCK", payload: item.type as any })
             }
           >
-            <item.icon className={cn("size-3.5 shrink-0")} />
-            <span className={cn("hidden truncate sm:inline")}>
-              {item.label}
-            </span>
-          </Button>
+            <item.icon className="size-3.5 shrink-0" />
+            <span className="hidden truncate sm:inline">{item.label}</span>
+          </button>
         ))}
       </div>
     </div>

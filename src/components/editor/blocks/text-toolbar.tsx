@@ -40,15 +40,6 @@ export function TextToolbar({ blockId }: TextToolbarProps) {
   }, [blockId]);
 
   const handleFormat = (type: keyof FormatState) => {
-    const isCodeBlocked =
-      activeFormats.code &&
-      (type === "bold" || type === "italic" || type === "link");
-    const isFormattingBlocked =
-      (activeFormats.bold || activeFormats.italic || activeFormats.link) &&
-      type === "code";
-
-    if (isCodeBlocked || isFormattingBlocked) return;
-
     const event = new CustomEvent<FormatEventDetail>(`format-${blockId}`, {
       detail: { type },
     });
@@ -70,18 +61,11 @@ export function TextToolbar({ blockId }: TextToolbarProps) {
       <div className="flex flex-1 gap-1">
         {tools.map((tool) => {
           const isActive = activeFormats[tool.id];
-          let isDisabled = false;
 
-          if (tool.id === "code") {
-            isDisabled =
-              activeFormats.bold || activeFormats.italic || activeFormats.link;
-          } else if (tool.id === "link") {
-            isDisabled =
-              activeFormats.code ||
-              (activeFormats.isSelectionEmpty && !activeFormats.link);
-          } else {
-            isDisabled = activeFormats.code;
-          }
+          const isDisabled =
+            tool.id === "link" &&
+            activeFormats.isSelectionEmpty &&
+            !activeFormats.link;
 
           return (
             <button
@@ -92,7 +76,7 @@ export function TextToolbar({ blockId }: TextToolbarProps) {
               className={cn(
                 "flex h-8 flex-1 items-center justify-center gap-2 rounded-md border transition-all",
                 isActive
-                  ? "bg-primary/20 text-primary border-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.1)]"
+                  ? "border-primary/40 bg-primary/20 text-primary shadow-[0_0_10px_rgba(var(--primary),0.1)]"
                   : "border-transparent text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300",
                 isDisabled &&
                   "pointer-events-none cursor-not-allowed opacity-20 grayscale",

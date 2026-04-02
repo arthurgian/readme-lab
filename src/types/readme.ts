@@ -47,6 +47,8 @@ export interface ImageContent {
 export interface TableContent {
   headers?: string[];
   rows?: string[][];
+  alignments?: ("left" | "center" | "right" | "")[];
+  selectedCells?: { r: number; c: number }[];
 }
 
 export type CommandContent = {
