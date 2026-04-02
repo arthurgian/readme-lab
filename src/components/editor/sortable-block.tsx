@@ -80,6 +80,7 @@ export function SortableBlock({
 
   return (
     <div
+      id={id}
       ref={setNodeRef}
       style={style}
       className={cn(
