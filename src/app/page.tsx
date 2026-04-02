@@ -10,13 +10,8 @@ import { Toolbar } from "@/components/editor/toolbar";
 import { useState, useEffect } from "react";
 import { Outline } from "@/components/editor/outline";
 
-export default function Home() {
+function HeaderActions() {
   const { state } = useReadme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleCopy = () => {
     const md = generateMarkdown(state.blocks);
@@ -34,6 +29,34 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+  return (
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleCopy}
+        className="hover:bg-primary/10 hover:text-primary transition-all"
+      >
+        <Copy className="mr-2 size-4" /> Copiar MD
+      </Button>
+      <Button
+        size="sm"
+        onClick={handleDownload}
+        className="bg-zinc-50 text-black shadow-lg hover:bg-zinc-200"
+      >
+        <Download className="mr-2 size-4" /> Exportar .md
+      </Button>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!mounted) return null;
 
   return (
@@ -50,23 +73,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopy}
-            className="hover:bg-primary/10 hover:text-primary transition-all"
-          >
-            <Copy className="mr-2 size-4" /> Copiar MD
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleDownload}
-            className="bg-zinc-50 text-black shadow-lg hover:bg-zinc-200"
-          >
-            <Download className="mr-2 size-4" /> Exportar .md
-          </Button>
-        </div>
+        <HeaderActions />
       </header>
 
       <main className="bg-background flex flex-1 flex-col overflow-hidden lg:flex-row">

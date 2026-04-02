@@ -1,14 +1,37 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { useReadme } from "@/store/ReadmeContext";
 import { generateMarkdown } from "@/lib/generate-markdown";
 
+const remarkPlugins = [remarkGfm];
+const rehypePlugins = [rehypeRaw];
+
+const markdownComponents = {
+  input: ({ node, checked, ...props }: any) => {
+    if (props.type === "checkbox") {
+      return (
+        <input {...props} type="checkbox" checked={checked || false} readOnly />
+      );
+    }
+    return <input {...props} />;
+  },
+};
+
 export function MarkdownRenderer() {
   const { state } = useReadme();
-  const markdown = generateMarkdown(state.blocks);
+  const [debouncedMarkdown, setDebouncedMarkdown] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedMarkdown(generateMarkdown(state.blocks));
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [state.blocks]);
 
   return (
     <div
@@ -38,25 +61,11 @@ export function MarkdownRenderer() {
       }}
     >
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={{
-          input: ({ node, checked, ...props }) => {
-            if (props.type === "checkbox") {
-              return (
-                <input
-                  {...props}
-                  type="checkbox"
-                  checked={checked || false}
-                  readOnly
-                />
-              );
-            }
-            return <input {...props} />;
-          },
-        }}
+        remarkPlugins={remarkPlugins}
+        rehypePlugins={rehypePlugins}
+        components={markdownComponents}
       >
-        {markdown}
+        {debouncedMarkdown}
       </ReactMarkdown>
     </div>
   );

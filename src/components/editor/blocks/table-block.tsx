@@ -11,34 +11,38 @@ interface TableBlockProps {
 }
 
 const parseMarks = (text: string) => {
-  let t = text.trim();
   const marks = { bold: false, italic: false, code: false };
+
+  const match = text.match(/^(\s*)(.*?)(\s*)$/);
+  const leading = match ? match[1] : "";
+  let core = match ? match[2] : text;
+  const trailing = match ? match[3] : "";
 
   let changed = true;
   while (changed) {
     changed = false;
 
-    if (t.startsWith("**") && t.endsWith("**") && t.length >= 4) {
+    if (core.startsWith("**") && core.endsWith("**") && core.length >= 4) {
       marks.bold = true;
-      t = t.slice(2, -2);
+      core = core.slice(2, -2);
       changed = true;
     } else if (
-      t.startsWith("*") &&
-      t.endsWith("*") &&
-      t.length >= 2 &&
-      !t.startsWith("**")
+      core.startsWith("*") &&
+      core.endsWith("*") &&
+      core.length >= 2 &&
+      !core.startsWith("**")
     ) {
       marks.italic = true;
-      t = t.slice(1, -1);
+      core = core.slice(1, -1);
       changed = true;
-    } else if (t.startsWith("`") && t.endsWith("`") && t.length >= 2) {
+    } else if (core.startsWith("`") && core.endsWith("`") && core.length >= 2) {
       marks.code = true;
-      t = t.slice(1, -1);
+      core = core.slice(1, -1);
       changed = true;
     }
   }
 
-  return { marks, plain: t };
+  return { marks, plain: leading + core + trailing };
 };
 
 const applyMarks = (
@@ -224,7 +228,6 @@ export function TableBlock({ content, onChange }: TableBlockProps) {
                     </div>
                   )}
 
-                  {/* Células */}
                   {row.map((cell, colIndex) => {
                     const { marks, plain } = parseMarks(cell);
                     const align = alignments[colIndex] || "left";
