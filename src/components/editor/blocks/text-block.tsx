@@ -62,6 +62,33 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
     content: content.text || "",
     immediatelyRender: false,
     editorProps: {
+      handleKeyDown: (view, event) => {
+        if (!editor) return false;
+
+        if (event.key === "Tab" && !event.shiftKey) {
+          if (editor.can().sinkListItem("listItem")) {
+            editor.chain().focus().sinkListItem("listItem").run();
+            return true;
+          }
+          if (editor.can().sinkListItem("taskItem")) {
+            editor.chain().focus().sinkListItem("taskItem").run();
+            return true;
+          }
+        }
+
+        if (event.key === "Tab" && event.shiftKey) {
+          if (editor.can().liftListItem("listItem")) {
+            editor.chain().focus().liftListItem("listItem").run();
+            return true;
+          }
+          if (editor.can().liftListItem("taskItem")) {
+            editor.chain().focus().liftListItem("taskItem").run();
+            return true;
+          }
+        }
+
+        return false;
+      },
       attributes: {
         class: cn(
           "min-h-[120px] w-full rounded-xl border-2 border-zinc-800",
@@ -69,6 +96,16 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
           "focus:border-primary/50 hover:border-zinc-700",
           "prose prose-invert max-w-none selection:bg-primary/30",
           "[&_code]:before:content-[''] [&_code]:after:content-['']",
+
+          "[&_ul]:pl-5 [&_ol]:pl-5",
+          "[&_li_p]:my-0.5",
+
+          "[&_ul_ul]:list-[circle]",
+          "[&_ol_ol]:list-[lower-roman]",
+
+          "[&_.tiptap>ul[data-type='taskList']]:pl-0",
+          "[&_ul[data-type='taskList']_ul]:pl-6",
+
           "[&_li[data-type='taskItem']>label]:mt-1",
           "[&_li[data-type='taskItem']>label>input]:accent-primary [&_li[data-type='taskItem']>label>input]:size-4 [&_li[data-type='taskItem']>label>input]:cursor-pointer",
           "[&_li[data-type='taskItem']>div]:flex-1 [&_li[data-type='taskItem']>div>p]:m-0",
@@ -132,6 +169,7 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
       if (type === "bold") editor.chain().focus().toggleBold().run();
       if (type === "italic") editor.chain().focus().toggleItalic().run();
       if (type === "code") editor.chain().focus().toggleCode().run();
+
       if (type === "bulletList")
         editor.chain().focus().toggleBulletList().run();
       if (type === "orderedList")

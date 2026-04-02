@@ -24,7 +24,10 @@ export function MarkdownRenderer() {
         "[&_h3]:text-xl [&_h3]:font-semibold [&_img]:m-0 [&_img]:inline-block [&_img]:max-w-full " +
         "[&_p]:text-left [&_p]:leading-relaxed [&_p]:text-zinc-400 [&_pre]:border [&_pre]:bg-zinc-900 " +
         "[&_pre]:p-4 [&_table]:w-full [&_table]:border-collapse [&_table]:font-mono [&_table]:text-[13px] " +
-        "[&_td]:border [&_td]:p-2 [&_th]:border [&_th]:bg-zinc-900 [&_th]:p-2"
+        "[&_td]:border [&_td]:p-2 [&_th]:border [&_th]:bg-zinc-900 [&_th]:p-2 " +
+        "[&_ol_ol]:list-[lower-roman] [&_ul_ul]:list-[circle] " +
+        "[&_ul.contains-task-list]:list-none [&_ul.contains-task-list]:pl-0 " +
+        "[&_li.task-list-item>input]:accent-primary [&_li.task-list-item]:flex [&_li.task-list-item]:items-start [&_li.task-list-item]:gap-2 [&_li.task-list-item>input]:mt-1.5 [&_li.task-list-item>p]:m-0"
       }
       style={{
         fontFamily:
