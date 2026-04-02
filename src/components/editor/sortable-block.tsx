@@ -14,6 +14,7 @@ import {
   Image as ImageIcon,
   Table,
   Terminal,
+  SeparatorHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,18 @@ const BLOCK_ICONS = {
   image: ImageIcon,
   table: Table,
   command: Terminal,
+  hr: SeparatorHorizontal,
+};
+
+const BLOCK_LABELS: Record<string, string> = {
+  header: "header",
+  text: "text",
+  badges: "badges",
+  techstack: "skills",
+  image: "image",
+  table: "table",
+  command: "command",
+  hr: "linha",
 };
 
 interface SortableBlockProps {
@@ -63,6 +76,7 @@ export function SortableBlock({
   };
 
   const Icon = BLOCK_ICONS[type as keyof typeof BLOCK_ICONS] || Type;
+  const displayLabel = BLOCK_LABELS[type] || type;
 
   return (
     <div
@@ -97,20 +111,25 @@ export function SortableBlock({
                 : "cursor-default",
             )}
           >
-            <Icon className="text-primary size-3.5" />
+            <Icon
+              className={cn(
+                "size-3.5 transition-colors",
+                isExpanded ? "text-primary" : "text-zinc-500",
+              )}
+            />
             <span
               className={cn(
-                "text-primary text-[10px] font-black uppercase",
-                "tracking-[0.2em]",
+                "text-[10px] font-black tracking-[0.2em] uppercase transition-colors",
+                isExpanded ? "text-primary" : "text-zinc-500",
               )}
             >
-              {type}
+              {displayLabel}
             </span>
             {configContent && (
               <ChevronDown
                 className={cn(
-                  "size-3 text-zinc-500 transition-transform duration-300",
-                  isExpanded ? "text-primary rotate-180" : "",
+                  "size-3 transition-colors transition-transform duration-300",
+                  isExpanded ? "text-primary rotate-180" : "text-zinc-500",
                 )}
               />
             )}

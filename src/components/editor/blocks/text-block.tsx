@@ -4,6 +4,8 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import CodeExtension from "@tiptap/extension-code";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
 import { useEffect, useState, useRef } from "react";
 import { TextContent } from "@/types/readme";
 import { cn } from "@/lib/utils";
@@ -45,6 +47,17 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
           class: "text-blue-400 underline cursor-pointer",
         },
       }),
+      TaskList.configure({
+        HTMLAttributes: {
+          class: "not-prose list-none p-0 my-4",
+        },
+      }),
+      TaskItem.configure({
+        nested: true,
+        HTMLAttributes: {
+          class: "flex items-start gap-3 my-2",
+        },
+      }),
     ],
     content: content.text || "",
     immediatelyRender: false,
@@ -56,6 +69,9 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
           "focus:border-primary/50 hover:border-zinc-700",
           "prose prose-invert max-w-none selection:bg-primary/30",
           "[&_code]:before:content-[''] [&_code]:after:content-['']",
+          "[&_li[data-type='taskItem']>label]:mt-1",
+          "[&_li[data-type='taskItem']>label>input]:accent-primary [&_li[data-type='taskItem']>label>input]:size-4 [&_li[data-type='taskItem']>label>input]:cursor-pointer",
+          "[&_li[data-type='taskItem']>div]:flex-1 [&_li[data-type='taskItem']>div>p]:m-0",
         ),
       },
     },
@@ -70,6 +86,9 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
             italic: editor.isActive("italic"),
             code: editor.isActive("code"),
             link: editor.isActive("link"),
+            bulletList: editor.isActive("bulletList"),
+            orderedList: editor.isActive("orderedList"),
+            taskList: editor.isActive("taskList"),
             isSelectionEmpty: editor.state.selection.empty,
           },
         }),
@@ -113,6 +132,11 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
       if (type === "bold") editor.chain().focus().toggleBold().run();
       if (type === "italic") editor.chain().focus().toggleItalic().run();
       if (type === "code") editor.chain().focus().toggleCode().run();
+      if (type === "bulletList")
+        editor.chain().focus().toggleBulletList().run();
+      if (type === "orderedList")
+        editor.chain().focus().toggleOrderedList().run();
+      if (type === "taskList") editor.chain().focus().toggleTaskList().run();
 
       if (type === "link") {
         if (editor.isActive("link")) {

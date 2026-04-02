@@ -5,7 +5,8 @@ export type BlockType =
   | "techstack"
   | "image"
   | "table"
-  | "command";
+  | "command"
+  | "hr";
 
 export interface HeaderContent {
   title?: string;
@@ -63,7 +64,8 @@ export type ReadmeBlock =
   | { id: string; type: "techstack"; content: TechStackContent }
   | { id: string; type: "image"; content: ImageContent }
   | { id: string; type: "table"; content: TableContent }
-  | { id: string; type: "command"; content: CommandContent };
+  | { id: string; type: "command"; content: CommandContent }
+  | { id: string; type: "hr"; content: {} };
 
 export interface ReadmeState {
   blocks: ReadmeBlock[];

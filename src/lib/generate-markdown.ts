@@ -9,8 +9,26 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
           return `${"#".repeat(block.content.level || 1)} ${block.content.title || "Título do Projeto"}`;
 
         case "text": {
-          const htmlContent = block.content.text || "";
-          const markdownText = turndownService.turndown(htmlContent);
+          let html = block.content.text || "";
+
+          html = html.replace(
+            /<li[^>]*data-checked="true"[^>]*>[\s\S]*?<div[^>]*>(?:<p>)?([\s\S]*?)(?:<\/p>)?<\/div><\/li>/gi,
+            "<li>[x] $1</li>",
+          );
+
+          html = html.replace(
+            /<li[^>]*data-type="taskItem"[^>]*>[\s\S]*?<div[^>]*>(?:<p>)?([\s\S]*?)(?:<\/p>)?<\/div><\/li>/gi,
+            "<li>[ ] $1</li>",
+          );
+
+          let markdownText = turndownService.turndown(html);
+
+          markdownText = markdownText
+            .replace(/\\\[/g, "[")
+            .replace(/\\\]/g, "]")
+            .replace(/^\* \[/gm, "- [")
+            .replace(/\n\s*\n(?=- \[)/g, "\n");
+
           return markdownText || "";
         }
 
@@ -25,11 +43,8 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
           return (block.content.items || [])
             .map((item) => {
               const style = item.style || "for-the-badge";
-
               const logoColor = item.logoColor || "FFFFFF";
-
               const imgUrl = `https://img.shields.io/badge/${encodeURIComponent(item.label)}-${item.color}?style=${style}&logo=${encodeURIComponent(item.label.toLowerCase())}&logoColor=${logoColor}`;
-
               const markdownImage = `![${item.label}](${imgUrl})`;
 
               if (item.link && item.link.trim() !== "") {
@@ -127,6 +142,9 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
 
           return `\n\n${headerRow}\n${separatorRow}\n${dataRows}`;
         }
+
+        case "hr":
+          return "\n\n---\n\n";
 
         default:
           return "";

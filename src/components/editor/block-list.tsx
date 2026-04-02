@@ -32,6 +32,7 @@ import { TextToolbar } from "./blocks/text-toolbar";
 import { CommandBlock } from "./blocks/command-block";
 import { BadgeConfigurator } from "./blocks/badge-configurator";
 import { TableConfigurator } from "./blocks/table-configurator";
+import { HrBlock } from "./blocks/hr-block";
 
 export function BlockList() {
   const { state, dispatch } = useReadme();
@@ -307,6 +308,9 @@ export function BlockList() {
             onChange={(c) => updateContent(c)}
           />
         );
+
+      case "hr":
+        return <HrBlock />;
       default:
         return null;
     }
