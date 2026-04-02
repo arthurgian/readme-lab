@@ -27,14 +27,35 @@ export function MarkdownRenderer() {
         "[&_td]:border [&_td]:p-2 [&_th]:border [&_th]:bg-zinc-900 [&_th]:p-2 " +
         "[&_ol_ol]:list-[lower-roman] [&_ul_ul]:list-[circle] " +
         "[&_ul.contains-task-list]:list-none [&_ul.contains-task-list]:pl-0 " +
-        "[&_li.task-list-item>input]:accent-primary [&_li.task-list-item]:flex [&_li.task-list-item]:items-start [&_li.task-list-item]:gap-2 [&_li.task-list-item>input]:mt-1.5 [&_li.task-list-item>p]:m-0"
+        "[&_li.task-list-item]:relative [&_li.task-list-item]:pl-6 " +
+        "[&_li.task-list-item_ul]:mt-1 [&_li.task-list-item_ul]:pl-4 " +
+        "[&_li.task-list-item>input]:accent-primary [&_li.task-list-item>input]:absolute [&_li.task-list-item>input]:top-1.5 [&_li.task-list-item>input]:left-0 [&_li.task-list-item>input]:m-0 " +
+        "[&_li.task-list-item>p]:m-0"
       }
       style={{
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
       }}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={{
+          input: ({ node, checked, ...props }) => {
+            if (props.type === "checkbox") {
+              return (
+                <input
+                  {...props}
+                  type="checkbox"
+                  checked={checked || false}
+                  readOnly
+                />
+              );
+            }
+            return <input {...props} />;
+          },
+        }}
+      >
         {markdown}
       </ReactMarkdown>
     </div>

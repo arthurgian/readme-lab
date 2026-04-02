@@ -66,23 +66,23 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
         if (!editor) return false;
 
         if (event.key === "Tab" && !event.shiftKey) {
-          if (editor.can().sinkListItem("listItem")) {
-            editor.chain().focus().sinkListItem("listItem").run();
-            return true;
-          }
           if (editor.can().sinkListItem("taskItem")) {
             editor.chain().focus().sinkListItem("taskItem").run();
+            return true;
+          }
+          if (editor.can().sinkListItem("listItem")) {
+            editor.chain().focus().sinkListItem("listItem").run();
             return true;
           }
         }
 
         if (event.key === "Tab" && event.shiftKey) {
-          if (editor.can().liftListItem("listItem")) {
-            editor.chain().focus().liftListItem("listItem").run();
-            return true;
-          }
           if (editor.can().liftListItem("taskItem")) {
             editor.chain().focus().liftListItem("taskItem").run();
+            return true;
+          }
+          if (editor.can().liftListItem("listItem")) {
+            editor.chain().focus().liftListItem("listItem").run();
             return true;
           }
         }
@@ -106,7 +106,7 @@ export function TextBlock({ id, content, onChange }: TextBlockProps) {
           "[&_.tiptap>ul[data-type='taskList']]:pl-0",
           "[&_ul[data-type='taskList']_ul]:pl-6",
 
-          "[&_li[data-type='taskItem']>label]:mt-1",
+          "[&_li[data-type='taskItem']>label]:mt-1.5",
           "[&_li[data-type='taskItem']>label>input]:accent-primary [&_li[data-type='taskItem']>label>input]:size-4 [&_li[data-type='taskItem']>label>input]:cursor-pointer",
           "[&_li[data-type='taskItem']>div]:flex-1 [&_li[data-type='taskItem']>div>p]:m-0",
         ),

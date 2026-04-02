@@ -12,13 +12,13 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
           let html = block.content.text || "";
 
           html = html.replace(
-            /<li[^>]*data-checked="true"[^>]*>[\s\S]*?<div[^>]*>(?:<p>)?([\s\S]*?)(?:<\/p>)?<\/div><\/li>/gi,
-            "<li>[x] $1</li>",
-          );
-
-          html = html.replace(
-            /<li[^>]*data-type="taskItem"[^>]*>[\s\S]*?<div[^>]*>(?:<p>)?([\s\S]*?)(?:<\/p>)?<\/div><\/li>/gi,
-            "<li>[ ] $1</li>",
+            /<li([^>]*)>\s*<label[^>]*>[\s\S]*?<\/label>/gi,
+            (match, attrs) => {
+              if (attrs.includes('data-checked="true"')) {
+                return `<li${attrs}>[x] `;
+              }
+              return `<li${attrs}>[ ] `;
+            },
           );
 
           let markdownText = turndownService.turndown(html);
@@ -26,8 +26,9 @@ export function generateMarkdown(blocks: ReadmeBlock[]): string {
           markdownText = markdownText
             .replace(/\\\[/g, "[")
             .replace(/\\\]/g, "]")
-            .replace(/^\* \[/gm, "- [")
-            .replace(/\n\s*\n(?=- \[)/g, "\n");
+            .replace(/(\[[xX ]\])\s*\n+\s*/g, "$1 ")
+            .replace(/^(\s*)\*\s+\[/gm, "$1- [")
+            .replace(/\n{2,}(?=\s*- \[)/g, "\n");
 
           return markdownText || "";
         }
